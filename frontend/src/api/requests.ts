@@ -13,13 +13,13 @@ export const getRequests = async (filters?: RequestFilters) => {
     if (filters?.equipmentId) params.append('equipmentId', filters.equipmentId);
     if (filters?.assignedToId) params.append('assignedToId', filters.assignedToId);
 
-    const response = await client.get<MaintenanceRequest[]>(`/requests?${params.toString()}`);
-    return response.data;
+    const response = await client.get<{ requests: MaintenanceRequest[] }>(`/requests?${params.toString()}`);
+    return response.data.requests;
 };
 
 export const getRequestById = async (id: string) => {
-    const response = await client.get<MaintenanceRequest>(`/requests/${id}`);
-    return response.data;
+    const response = await client.get<{ request: MaintenanceRequest }>(`/requests/${id}`);
+    return response.data.request;
 };
 
 export const createRequest = async (data: {
@@ -30,22 +30,22 @@ export const createRequest = async (data: {
     equipmentId: string;
     scheduledDate?: string;
 }) => {
-    const response = await client.post<MaintenanceRequest>('/requests', data);
-    return response.data;
+    const response = await client.post<{ request: MaintenanceRequest }>('/requests', data);
+    return response.data.request;
 };
 
 export const updateRequestStatus = async (id: string, status: RequestStatus) => {
-    const response = await client.patch<MaintenanceRequest>(`/requests/${id}/status`, { status });
-    return response.data;
+    const response = await client.patch<{ request: MaintenanceRequest }>(`/requests/${id}/status`, { status });
+    return response.data.request;
 };
 
 export const assignRequest = async (id: string) => {
     // Self assign
-    const response = await client.patch<MaintenanceRequest>(`/requests/${id}/assign`);
-    return response.data;
+    const response = await client.patch<{ request: MaintenanceRequest }>(`/requests/${id}/assign`);
+    return response.data.request;
 };
 
 export const completeRequest = async (id: string, data: { durationHours: number; notes?: string }) => {
-    const response = await client.post<MaintenanceRequest>(`/requests/${id}/complete`, data);
-    return response.data;
+    const response = await client.post<{ request: MaintenanceRequest }>(`/requests/${id}/complete`, data);
+    return response.data.request;
 };

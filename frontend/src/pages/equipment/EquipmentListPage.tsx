@@ -35,8 +35,9 @@ export default function EquipmentListPage() {
                 getEquipment(),
                 getDepartments()
             ]);
-            setEquipment(equips);
-            setDepartments(depts);
+            console.log('Loaded equipment:', equips);
+            setEquipment(Array.isArray(equips) ? equips : []);
+            setDepartments(Array.isArray(depts) ? depts : []);
         } catch (error) {
             console.error(error);
         } finally {
@@ -108,7 +109,7 @@ export default function EquipmentListPage() {
                                 <tr>
                                     <td colSpan={6} className="h-24 text-center">Loading...</td>
                                 </tr>
-                            ) : equipment.length === 0 ? (
+                            ) : !Array.isArray(equipment) || equipment.length === 0 ? (
                                 <tr>
                                     <td colSpan={6} className="h-24 text-center text-muted-foreground">No equipment found.</td>
                                 </tr>
@@ -122,7 +123,7 @@ export default function EquipmentListPage() {
                                             </Link>
                                         </td>
                                         <td className="p-4 align-middle">{item.serialNumber}</td>
-                                        <td className="p-4 align-middle capitalize">{item.category.toLowerCase()}</td>
+                                        <td className="p-4 align-middle capitalize">{item.category?.toLowerCase() || '-'}</td>
                                         <td className="p-4 align-middle">{item.department?.name || '-'}</td>
                                         <td className="p-4 align-middle">
                                             <span className={cn(
@@ -135,14 +136,19 @@ export default function EquipmentListPage() {
                                             </span>
                                         </td>
                                         <td className="p-4 align-middle">
-                                            {item.warrantyExpiry && (
-                                                <span className={cn(
-                                                    "text-xs",
-                                                    new Date(item.warrantyExpiry) < new Date() ? "text-destructive font-bold" : "text-green-600"
-                                                )}>
-                                                    {new Date(item.warrantyExpiry) < new Date() ? "EXPIRED" : format(new Date(item.warrantyExpiry), 'MMM d, yyyy')}
-                                                </span>
-                                            )}
+                                            {item.warrantyExpiry ? (() => {
+                                                const date = new Date(item.warrantyExpiry);
+                                                if (isNaN(date.getTime())) return <span className="text-muted-foreground">-</span>;
+                                                const isExpired = date < new Date();
+                                                return (
+                                                    <span className={cn(
+                                                        "text-xs",
+                                                        isExpired ? "text-destructive font-bold" : "text-green-600"
+                                                    )}>
+                                                        {isExpired ? "EXPIRED" : format(date, 'MMM d, yyyy')}
+                                                    </span>
+                                                );
+                                            })() : <span className="text-muted-foreground">-</span>}
                                         </td>
                                     </tr>
                                 ))

@@ -28,7 +28,9 @@ export default function RegisterPage() {
                 ...formData,
                 role: 'TECHNICIAN' // Default role
             });
-            navigate('/dashboard');
+            // Logout immediately to force user to sign in
+            useAuthStore.getState().logout();
+            navigate('/login');
         } catch (err: any) {
             console.error("Registration failed:", err);
         }

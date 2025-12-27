@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useAuthStore } from '../store/useAuthStore';
 
-const baseURL = import.meta.env.VITE_API_URL || 'https://gearguard-the-ultimate-maintenance.onrender.com/api';
+const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export const client = axios.create({
     baseURL,

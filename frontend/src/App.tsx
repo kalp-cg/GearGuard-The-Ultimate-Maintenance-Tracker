@@ -9,6 +9,7 @@ import TeamsListPage from './pages/teams/TeamsListPage';
 import RequestListPage from './pages/requests/RequestListPage';
 import KanbanBoard from './pages/requests/KanbanBoard';
 import CalendarView from './pages/requests/CalendarView';
+import SettingsPage from './pages/settings/SettingsPage';  // Imported
 
 import DashboardPage from './pages/dashboard/DashboardPage';
 
@@ -36,6 +37,9 @@ function App() {
             <Route path="/requests" element={<RequestListPage />} />
             <Route path="/requests/kanban" element={<KanbanBoard />} />
             <Route path="/requests/calendar" element={<CalendarView />} />
+
+            {/* Settings */}
+            <Route path="/settings" element={<SettingsPage />} />
 
             {/* Default redirect to dashboard */}
             <Route path="/" element={<Navigate to="/dashboard" replace />} />

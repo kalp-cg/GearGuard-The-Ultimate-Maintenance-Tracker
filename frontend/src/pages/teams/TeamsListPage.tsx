@@ -14,7 +14,8 @@ export default function TeamsListPage() {
     const loadTeams = async () => {
         try {
             const data = await getTeams();
-            setTeams(data);
+            console.log('Loaded teams:', data);
+            setTeams(Array.isArray(data) ? data : []);
         } catch (error) {
             console.error(error);
         } finally {
@@ -31,6 +32,8 @@ export default function TeamsListPage() {
 
             {isLoading ? (
                 <div className="text-center p-12">Loading teams...</div>
+            ) : !Array.isArray(teams) || teams.length === 0 ? (
+                <div className="text-center p-12 text-muted-foreground">No maintenance teams found.</div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {teams.map((team) => (

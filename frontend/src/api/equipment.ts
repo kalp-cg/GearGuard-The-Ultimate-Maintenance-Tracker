@@ -11,21 +11,21 @@ export const getEquipment = async (filters?: EquipmentFilters) => {
     if (filters?.departmentId) params.append('departmentId', filters.departmentId);
     if (filters?.search) params.append('search', filters.search);
 
-    const response = await client.get<Equipment[]>(`/equipment?${params.toString()}`);
-    return response.data;
+    const response = await client.get<{ equipment: Equipment[] }>(`/equipment?${params.toString()}`);
+    return response.data.equipment;
 };
 
 export const getEquipmentById = async (id: string) => {
-    const response = await client.get<Equipment>(`/equipment/${id}`);
-    return response.data;
+    const response = await client.get<{ equipment: Equipment }>(`/equipment/${id}`);
+    return response.data.equipment;
 };
 
 export const getEquipmentRequests = async (id: string) => {
-    const response = await client.get(`/equipment/${id}/requests`);
-    return response.data;
+    const response = await client.get<{ requests: any[] }>(`/equipment/${id}/requests`);
+    return response.data.requests;
 };
 
 export const getEquipmentRequestsCount = async (id: string) => {
     const response = await client.get<{ count: number }>(`/equipment/${id}/requests/count`);
-    return response.data;
+    return response.data.count;
 };
