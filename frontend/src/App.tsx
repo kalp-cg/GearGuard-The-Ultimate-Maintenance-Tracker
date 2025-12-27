@@ -1,0 +1,49 @@
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import LoginPage from './pages/auth/LoginPage';
+import RegisterPage from './pages/auth/RegisterPage';
+import ProtectedRoute from './components/layout/ProtectedRoute';
+import DashboardLayout from './components/layout/DashboardLayout';
+import EquipmentListPage from './pages/equipment/EquipmentListPage';
+import EquipmentDetailPage from './pages/equipment/EquipmentDetailPage';
+import TeamsListPage from './pages/teams/TeamsListPage';
+import RequestListPage from './pages/requests/RequestListPage';
+import KanbanBoard from './pages/requests/KanbanBoard';
+import CalendarView from './pages/requests/CalendarView';
+
+import DashboardPage from './pages/dashboard/DashboardPage';
+
+// Placeholder Pages (Will be implemented in next steps)
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+
+        <Route element={<ProtectedRoute />}>
+          <Route element={<DashboardLayout />}>
+            <Route path="/dashboard" element={<DashboardPage />} />
+
+            {/* Equipment */}
+            <Route path="/equipment" element={<EquipmentListPage />} />
+            <Route path="/equipment/:id" element={<EquipmentDetailPage />} />
+
+            {/* Teams */}
+            <Route path="/teams" element={<TeamsListPage />} />
+
+            {/* Requests */}
+            <Route path="/requests" element={<RequestListPage />} />
+            <Route path="/requests/kanban" element={<KanbanBoard />} />
+            <Route path="/requests/calendar" element={<CalendarView />} />
+
+            {/* Default redirect to dashboard */}
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          </Route>
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+export default App;
