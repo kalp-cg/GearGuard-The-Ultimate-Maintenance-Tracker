@@ -8,10 +8,10 @@ const router = Router();
 router.use(authenticate);
 
 // Equipment CRUD
-router.post('/', authorize('ADMIN', 'MANAGER'), equipmentController.createEquipment);
+router.post('/', authorize('ADMIN'), equipmentController.createEquipment);
 router.get('/', equipmentController.getAllEquipment);
 router.get('/:id', equipmentController.getEquipmentById);
-router.put('/:id', authorize('ADMIN', 'MANAGER'), equipmentController.updateEquipment);
+router.put('/:id', authorize('ADMIN'), equipmentController.updateEquipment);
 router.delete('/:id', authorize('ADMIN'), equipmentController.deleteEquipment);
 
 // Smart button: Get related requests

@@ -4,8 +4,21 @@ import config from './config';
 import routes from './routes';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 
-// Create Express app
+// Rate Limiter
+import rateLimit from 'express-rate-limit';
+
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
+    standardHeaders: 'draft-7',
+    legacyHeaders: false,
+    message: "Too many requests from this IP, please try again after 15 minutes"
+});
+
+// Create Express app 
 const app: Application = express();
+
+app.use(limiter);
 
 // ============================================
 // MIDDLEWARE
@@ -13,8 +26,26 @@ const app: Application = express();
 
 // CORS
 app.use(cors({
-    origin: config.cors.origin,
+    origin: function (origin, callback) {
+        const allowedOrigins = [
+            'http://localhost:5173',
+            'http://localhost:3000',
+            'http://127.0.0.1:5173',
+            'http://127.0.0.1:3000',
+            ...config.cors.origin
+        ];
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+
+        if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV === 'development') {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 // Body parsing

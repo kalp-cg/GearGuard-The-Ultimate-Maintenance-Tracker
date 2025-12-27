@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import * as requestController from '../controllers/requestController';
-import { authenticate } from '../middleware/auth';
+import { authenticate, authorize } from '../middleware/auth';
 import { validateTeamAccess } from '../middleware/teamAuth';
 
 const router = Router();
@@ -20,7 +20,7 @@ router.put('/:id', validateTeamAccess, requestController.updateRequest);
 router.delete('/:id', validateTeamAccess, requestController.deleteRequest);
 
 // Workflow actions (require team access)
-router.post('/:id/assign', validateTeamAccess, requestController.assignRequest);
+router.post('/:id/assign', authorize('ADMIN', 'MANAGER'), validateTeamAccess, requestController.assignRequest);
 router.post('/:id/start', validateTeamAccess, requestController.startRequest);
 router.post('/:id/complete', validateTeamAccess, requestController.completeRequest);
 router.post('/:id/scrap', validateTeamAccess, requestController.scrapRequest);

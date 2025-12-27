@@ -35,6 +35,9 @@ export interface Department {
     id: string;
     name: string;
     description?: string;
+    location?: string;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 export interface MaintenanceTeam {
@@ -61,6 +64,20 @@ export interface Equipment {
     department?: Department;
     maintenanceTeamId: string;
     maintenanceTeam?: MaintenanceTeam;
+    createdAt: string;
+    updatedAt: string;
+}
+
+// Module B: Inventory
+export interface Part {
+    id: string;
+    name: string;
+    sku: string;
+    description?: string;
+    quantity: number;
+    minQuantity: number;
+    cost: number;
+    location?: string;
     createdAt: string;
     updatedAt: string;
 }

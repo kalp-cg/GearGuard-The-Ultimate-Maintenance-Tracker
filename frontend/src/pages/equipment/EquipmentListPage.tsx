@@ -3,12 +3,16 @@ import { getEquipment } from '../../api/equipment';
 import { getDepartments } from '../../api/departments';
 import type { Equipment, Department } from '../../types';
 import { Input } from '../../components/common/Input';
-import { Search, Wrench } from 'lucide-react';
+import { Button } from '../../components/common/Button';
+import { Search, Wrench, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import { cn } from '../../lib/utils';
 
+import { useAuthStore } from '../../store/useAuthStore';
+
 export default function EquipmentListPage() {
+    const { user } = useAuthStore();
     const [equipment, setEquipment] = useState<Equipment[]>([]);
     const [departments, setDepartments] = useState<Department[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -62,7 +66,14 @@ export default function EquipmentListPage() {
                     <p className="text-muted-foreground">Manage assets and track maintenance history.</p>
                 </div>
 
-                {/* Actions if needed, e.g. Add Equipment */}
+                {user?.role === 'ADMIN' && (
+                    <Link to="/equipment/new">
+                        <Button>
+                            <Plus className="h-4 w-4 mr-2" />
+                            Add Equipment
+                        </Button>
+                    </Link>
+                )}
             </div>
 
             {/* Filters */}

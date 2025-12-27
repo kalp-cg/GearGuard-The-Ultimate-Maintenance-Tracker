@@ -49,3 +49,12 @@ export const completeRequest = async (id: string, data: { durationHours: number;
     const response = await client.post<{ request: MaintenanceRequest }>(`/requests/${id}/complete`, data);
     return response.data.request;
 };
+
+export const getReportingSummary = async () => {
+    const response = await client.get<{
+        stats: { total: number; byStatus: Record<string, number>; byPriority: Record<string, number> };
+        chartData: { name: string; value: number; fill: string }[];
+        barData: { name: string; count: number }[];
+    }>('/requests/reports/pivot'); // Adjust endpoint if needed based on backend
+    return response.data;
+};

@@ -32,14 +32,33 @@ export async function createRequest(req: Request, res: Response): Promise<void> 
 export async function getAllRequests(req: Request, res: Response): Promise<void> {
     try {
         const { status, requestType, teamId, assignedToId, equipmentId } = req.query;
+        const user = req.user!; // Authenticated by middleware
 
-        const requests = await requestService.getAllRequests({
+        const filters: any = {
             status: status as any,
             requestType: requestType as any,
-            teamId: teamId as string,
-            assignedToId: assignedToId as string,
             equipmentId: equipmentId as string,
-        });
+        };
+
+        // Enforce RBAC filtering
+        if (user.role === 'TECHNICIAN') {
+            // Technician: View only team-related requests
+            if (user.teamId) {
+                filters.teamId = user.teamId;
+            } else {
+                // Fallback: If no team, view only assigned to self
+                filters.assignedToId = user.id;
+            }
+        } else if (user.role === 'USER') {
+            // User: View only requests created by them
+            filters.createdById = user.id;
+        } else {
+            // Admin/Manager: Allow filtering by team/assignee if provided
+            if (teamId) filters.teamId = teamId as string;
+            if (assignedToId) filters.assignedToId = assignedToId as string;
+        }
+
+        const requests = await requestService.getAllRequests(filters);
 
         res.status(200).json({ requests });
     } catch (error: any) {

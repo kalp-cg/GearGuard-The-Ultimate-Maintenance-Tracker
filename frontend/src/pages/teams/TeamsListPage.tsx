@@ -1,9 +1,13 @@
 import { useState, useEffect } from 'react';
 import { getTeams } from '../../api/teams';
 import type { MaintenanceTeam } from '../../types';
-import { Users, User as UserIcon } from 'lucide-react';
+import { Users, User as UserIcon, Plus } from 'lucide-react';
+import { useAuthStore } from '../../store/useAuthStore';
+import { Button } from '../../components/common/Button';
+import { Link } from 'react-router-dom';
 
 export default function TeamsListPage() {
+    const { user } = useAuthStore();
     const [teams, setTeams] = useState<MaintenanceTeam[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -25,9 +29,20 @@ export default function TeamsListPage() {
 
     return (
         <div className="space-y-6">
-            <div>
-                <h1 className="text-3xl font-bold tracking-tight">Maintenance Teams</h1>
-                <p className="text-muted-foreground">Manage your maintenance crews and technicians.</p>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h1 className="text-3xl font-bold tracking-tight">Maintenance Teams</h1>
+                    <p className="text-muted-foreground">Manage your maintenance crews and technicians.</p>
+                </div>
+
+                {user?.role === 'ADMIN' && (
+                    <Link to="/teams/new">
+                        <Button>
+                            <Plus className="h-4 w-4 mr-2" />
+                            Create Team
+                        </Button>
+                    </Link>
+                )}
             </div>
 
             {isLoading ? (

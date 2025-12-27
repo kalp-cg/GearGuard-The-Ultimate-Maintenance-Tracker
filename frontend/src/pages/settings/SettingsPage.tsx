@@ -1,33 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useAuthStore } from '../../store/useAuthStore';
-import { User, Bell, Shield, Moon, Sun } from 'lucide-react';
-import { cn } from '../../lib/utils';
+import { User, Bell, Shield } from 'lucide-react';
+
 
 export default function SettingsPage() {
     const { user } = useAuthStore();
-    const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
+    // Enforce light mode
     useEffect(() => {
-        const storedTheme = localStorage.getItem('theme');
-        if (storedTheme === 'dark' || (!storedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            setTheme('dark');
-            document.documentElement.classList.add('dark');
-        } else {
-            setTheme('light');
-            document.documentElement.classList.remove('dark');
-        }
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
     }, []);
-
-    const toggleTheme = () => {
-        const newTheme = theme === 'light' ? 'dark' : 'light';
-        setTheme(newTheme);
-        localStorage.setItem('theme', newTheme);
-        if (newTheme === 'dark') {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    };
 
     return (
         <div className="space-y-6">
@@ -82,29 +65,6 @@ export default function SettingsPage() {
                             </div>
                             <div className="h-6 w-11 rounded-full bg-primary p-1 cursor-pointer">
                                 <div className="h-4 w-4 rounded-full bg-white transform translate-x-5 transition-transform" />
-                            </div>
-                        </div>
-                        <div className="flex items-center justify-between">
-                            <div className="space-y-0.5">
-                                <label className="text-sm font-medium leading-none cursor-pointer" onClick={toggleTheme}>
-                                    <div className="flex items-center gap-2">
-                                        {theme === 'dark' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-                                        Dark Mode
-                                    </div>
-                                </label>
-                                <p className="text-sm text-muted-foreground">Toggle application theme.</p>
-                            </div>
-                            <div
-                                className={cn(
-                                    "h-6 w-11 rounded-full p-1 cursor-pointer transition-colors",
-                                    theme === 'dark' ? "bg-primary" : "bg-muted"
-                                )}
-                                onClick={toggleTheme}
-                            >
-                                <div className={cn(
-                                    "h-4 w-4 rounded-full bg-white transition-transform",
-                                    theme === 'dark' ? "translate-x-5" : "translate-x-0"
-                                )} />
                             </div>
                         </div>
                     </div>

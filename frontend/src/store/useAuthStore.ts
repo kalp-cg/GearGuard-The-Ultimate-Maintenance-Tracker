@@ -47,13 +47,10 @@ export const useAuthStore = create<AuthState>()(
             register: async (credentials) => {
                 set({ isLoading: true, error: null });
                 try {
-                    const response = await apiRegister(credentials);
-                    set({
-                        user: response.user,
-                        token: response.token,
-                        isAuthenticated: true,
-                        isLoading: false
-                    });
+                    await apiRegister(credentials);
+                    // Registration successful, but we don't log in yet.
+                    // User must verify email.
+                    set({ isLoading: false });
                 } catch (error: any) {
                     const errData = error.response?.data;
                     const errorMsg = errData?.error

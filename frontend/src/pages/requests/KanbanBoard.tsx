@@ -147,8 +147,10 @@ export default function KanbanBoard() {
                                                         {...provided.draggableProps}
                                                         {...provided.dragHandleProps}
                                                         className={cn(
-                                                            "bg-card p-4 rounded-md shadow-sm border border-border group hover:border-primary/50 transition-colors",
-                                                            snapshot.isDragging && "shadow-lg ring-2 ring-primary rotate-2"
+                                                            "bg-card p-4 rounded-md shadow-sm border border-border group hover:border-primary/50 transition-colors relative overflow-hidden",
+                                                            snapshot.isDragging && "shadow-lg ring-2 ring-primary rotate-2",
+                                                            // Overdue Logic: If Scheduled Date < Now AND status is NEW or IN_PROGRESS
+                                                            (req.scheduledDate && new Date(req.scheduledDate) < new Date() && (req.status === 'NEW' || req.status === 'IN_PROGRESS')) && "border-l-4 border-l-destructive"
                                                         )}
                                                         style={provided.draggableProps.style}
                                                     >
@@ -161,6 +163,11 @@ export default function KanbanBoard() {
                                                             </span>
                                                             <span className="text-[10px] text-muted-foreground">{req.requestType}</span>
                                                         </div>
+
+                                                        {/* Overdue Text Indicator */}
+                                                        {(req.scheduledDate && new Date(req.scheduledDate) < new Date() && (req.status === 'NEW' || req.status === 'IN_PROGRESS')) && (
+                                                            <div className="text-[10px] font-bold text-destructive mb-1 uppercase tracking-wider">Overdue</div>
+                                                        )}
 
                                                         <h4 className="font-medium text-sm mb-1 group-hover:text-primary">{req.subject}</h4>
                                                         <p className="text-xs text-muted-foreground mb-3 flex items-center gap-1">

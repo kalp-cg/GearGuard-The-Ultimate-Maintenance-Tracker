@@ -1,0 +1,20 @@
+src/controllers/authController.ts(70,30): error TS6133: 'req' is declared but its value is never read.
+src/controllers/departmentController.ts(23,41): error TS6133: 'req' is declared but its value is never read.
+src/controllers/requestController.ts(164,37): error TS6133: 'req' is declared but its value is never read.
+src/controllers/requestController.ts(200,42): error TS6133: 'req' is declared but its value is never read.
+src/controllers/requestController.ts(213,40): error TS6133: 'req' is declared but its value is never read.
+src/controllers/teamController.ts(23,35): error TS6133: 'req' is declared but its value is never read.
+src/middleware/auth.ts(2,23): error TS6133: 'JwtPayload' is declared but its value is never read.
+src/middleware/errorHandler.ts(9,5): error TS6133: 'req' is declared but its value is never read.
+src/middleware/errorHandler.ts(11,5): error TS6133: 'next' is declared but its value is never read.
+src/routes/index.ts(18,24): error TS6133: 'req' is declared but its value is never read.
+src/server.ts(39,19): error TS6133: 'res' is declared but its value is never read.
+src/server.ts(52,15): error TS6133: 'req' is declared but its value is never read.
+src/services/requestService.ts(2,38): error TS6133: 'EquipmentCategory' is declared but its value is never read.
+src/utils/jwt.ts(14,16): error TS2769: No overload matches this call.
+  Overload 1 of 5, '(payload: string | object | Buffer<ArrayBufferLike>, secretOrPrivateKey: null, options?: (SignOptions & { algorithm: "none"; }) | undefined): string', gave the following error.
+    Argument of type 'string' is not assignable to parameter of type 'null'.
+  Overload 2 of 5, '(payload: string | object | Buffer<ArrayBufferLike>, secretOrPrivateKey: Buffer<ArrayBufferLike> | Secret | PrivateKeyInput | JsonWebKeyInput, options?: SignOptions | undefined): string', gave the following error.
+    Type 'string' is not assignable to type 'number | StringValue | undefined'.
+  Overload 3 of 5, '(payload: string | object | Buffer<ArrayBufferLike>, secretOrPrivateKey: Buffer<ArrayBufferLike> | Secret | PrivateKeyInput | JsonWebKeyInput, callback: SignCallback): void', gave the following error.
+    Object literal may only specify known properties, and 'expiresIn' does not exist in type 'SignCallback'.

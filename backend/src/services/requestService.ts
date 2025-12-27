@@ -87,6 +87,7 @@ export async function getAllRequests(filters?: {
     teamId?: string;
     assignedToId?: string;
     equipmentId?: string;
+    createdById?: string;
 }) {
     return await prisma.maintenanceRequest.findMany({
         where: {
@@ -95,6 +96,7 @@ export async function getAllRequests(filters?: {
             teamId: filters?.teamId,
             assignedToId: filters?.assignedToId,
             equipmentId: filters?.equipmentId,
+            createdById: filters?.createdById,
         },
         include: {
             equipment: true,

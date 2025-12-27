@@ -8,14 +8,14 @@ const router = Router();
 router.use(authenticate);
 
 // Team CRUD
-router.post('/', authorize('ADMIN', 'MANAGER'), teamController.createTeam);
+router.post('/', authorize('ADMIN'), teamController.createTeam);
 router.get('/', teamController.getAllTeams);
 router.get('/:id', teamController.getTeamById);
-router.put('/:id', authorize('ADMIN', 'MANAGER'), teamController.updateTeam);
+router.put('/:id', authorize('ADMIN'), teamController.updateTeam);
 router.delete('/:id', authorize('ADMIN'), teamController.deleteTeam);
 
 // Member management
-router.post('/:id/members', authorize('ADMIN', 'MANAGER'), teamController.addTeamMember);
-router.delete('/:id/members/:userId', authorize('ADMIN', 'MANAGER'), teamController.removeTeamMember);
+router.post('/:id/members', authorize('ADMIN'), teamController.addTeamMember);
+router.delete('/:id/members/:userId', authorize('ADMIN'), teamController.removeTeamMember);
 
 export default router;

@@ -32,6 +32,10 @@ export async function register(data: RegisterData) {
     // Hash password
     const hashedPassword = await hashPassword(data.password);
 
+    // Generate OTP
+    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const verificationCodeExpiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 mins
+
     // Create user
     const user = await prisma.user.create({
         data: {
@@ -41,6 +45,9 @@ export async function register(data: RegisterData) {
             lastName: data.lastName,
             role: data.role || 'USER',
             teamId: data.teamId,
+            verificationCode,
+            verificationCodeExpiresAt,
+            isVerified: false
         },
         select: {
             id: true,
@@ -48,19 +55,35 @@ export async function register(data: RegisterData) {
             firstName: true,
             lastName: true,
             role: true,
+            verificationCode: true, // Internal use for email sending
             teamId: true,
             createdAt: true,
         },
     });
 
-    // Generate token
-    const token = generateToken({
-        userId: user.id,
-        email: user.email,
-        role: user.role,
+    return user;
+}
+
+export async function verifyUser(email: string, code: string) {
+    const user = await prisma.user.findUnique({ where: { email } });
+
+    if (!user) throw new Error('User not found');
+    if (user.isVerified) throw new Error('Email already verified');
+    if (user.verificationCode !== code) throw new Error('Invalid verification code');
+    if (!user.verificationCodeExpiresAt || user.verificationCodeExpiresAt < new Date()) {
+        throw new Error('Verification code expired');
+    }
+
+    await prisma.user.update({
+        where: { id: user.id },
+        data: {
+            isVerified: true,
+            verificationCode: null,
+            verificationCodeExpiresAt: null
+        }
     });
 
-    return { user, token };
+    return true;
 }
 
 /**
@@ -126,4 +149,25 @@ export async function getUserById(userId: string) {
     }
 
     return user;
+}
+
+/**
+ * Find user by email
+ */
+export async function findUserByEmail(email: string) {
+    return prisma.user.findUnique({
+        where: { email },
+    });
+}
+
+/**
+ * Update user password
+ */
+export async function updatePassword(userId: string, newPassword: string) {
+    const hashedPassword = await hashPassword(newPassword);
+
+    await prisma.user.update({
+        where: { id: userId },
+        data: { password: hashedPassword },
+    });
 }

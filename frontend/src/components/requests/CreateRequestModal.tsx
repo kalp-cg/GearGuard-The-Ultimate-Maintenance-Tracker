@@ -11,9 +11,10 @@ interface CreateRequestModalProps {
     onClose: () => void;
     onSuccess: () => void;
     preselectedEquipmentId?: string;
+    preselectedDate?: string;
 }
 
-export default function CreateRequestModal({ isOpen, onClose, onSuccess, preselectedEquipmentId }: CreateRequestModalProps) {
+export default function CreateRequestModal({ isOpen, onClose, onSuccess, preselectedEquipmentId, preselectedDate }: CreateRequestModalProps) {
     const [equipmentList, setEquipmentList] = useState<Equipment[]>([]);
     const [loading, setLoading] = useState(false);
 
@@ -29,8 +30,12 @@ export default function CreateRequestModal({ isOpen, onClose, onSuccess, presele
         if (isOpen) {
             loadEquipment();
             if (preselectedEquipmentId) setEquipmentId(preselectedEquipmentId);
+            if (preselectedDate) {
+                setScheduledDate(preselectedDate);
+                setRequestType('PREVENTIVE');
+            }
         }
-    }, [isOpen, preselectedEquipmentId]);
+    }, [isOpen, preselectedEquipmentId, preselectedDate]);
 
     const loadEquipment = async () => {
         const data = await getEquipment();
@@ -96,8 +101,30 @@ export default function CreateRequestModal({ isOpen, onClose, onSuccess, presele
                             {equipmentList.map(eq => (
                                 <option key={eq.id} value={eq.id}>{eq.name} ({eq.serialNumber})</option>
                             ))}
+                            {equipmentList.map(eq => (
+                                <option key={eq.id} value={eq.id}>{eq.name} ({eq.serialNumber})</option>
+                            ))}
                         </select>
                     </div>
+
+                    {/* Auto-fill info */}
+                    {equipmentId && (() => {
+                        const selectedEq = equipmentList.find(e => e.id === equipmentId);
+                        if (selectedEq) {
+                            return (
+                                <div className="grid grid-cols-2 gap-4 text-xs bg-muted/50 p-3 rounded-md border border-border">
+                                    <div className="flex flex-col">
+                                        <span className="text-muted-foreground uppercase tracking-wider">Category</span>
+                                        <span className="font-semibold">{selectedEq.category}</span>
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <span className="text-muted-foreground uppercase tracking-wider">Assigned Team</span>
+                                        <span className="font-semibold text-primary">{selectedEq.maintenanceTeam?.name || 'Unassigned'}</span>
+                                    </div>
+                                </div>
+                            );
+                        }
+                    })()}
 
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">

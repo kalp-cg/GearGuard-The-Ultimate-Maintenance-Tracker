@@ -62,29 +62,29 @@ export default function DashboardPage() {
                 <StatsCard
                     title="Total Assets"
                     value={stats.equipmentCount}
-                    icon={<Wrench className="h-6 w-6 text-blue-600" />}
-                    className="bg-blue-50 border-blue-100"
+                    icon={<Wrench className="h-6 w-6 text-[#714B67]" />}
+                    className="bg-card shadow-sm border border-border" // Clean white card
                     link="/equipment"
                 />
                 <StatsCard
                     title="Active Requests"
                     value={stats.activeRequests}
-                    icon={<ClipboardList className="h-6 w-6 text-orange-600" />}
-                    className="bg-orange-50 border-orange-100"
+                    icon={<ClipboardList className="h-6 w-6 text-[#017E84]" />}
+                    className="bg-card shadow-sm border border-border"
                     link="/requests"
                 />
                 <StatsCard
                     title="Urgent Attention"
                     value={stats.urgentRequests}
-                    icon={<Activity className="h-6 w-6 text-red-600" />}
-                    className="bg-red-50 border-red-100"
-                    link="/requests?status=URGENT" // Ideally we'd support filter logic
+                    icon={<Activity className="h-6 w-6 text-destructive" />}
+                    className="bg-card shadow-sm border border-border"
+                    link="/requests?status=URGENT"
                 />
                 <StatsCard
                     title="Maintenance Teams"
                     value={stats.teamCount}
-                    icon={<Users className="h-6 w-6 text-green-600" />}
-                    className="bg-green-50 border-green-100"
+                    icon={<Users className="h-6 w-6 text-[#714B67]" />}
+                    className="bg-card shadow-sm border border-border"
                     link="/teams"
                 />
             </div>

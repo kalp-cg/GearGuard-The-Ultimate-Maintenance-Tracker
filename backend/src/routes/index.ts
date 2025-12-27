@@ -4,6 +4,7 @@ import equipmentRoutes from './equipmentRoutes';
 import requestRoutes from './requestRoutes';
 import teamRoutes from './teamRoutes';
 import departmentRoutes from './departmentRoutes';
+import partRoutes from './partRoutes';
 
 const router = Router();
 
@@ -12,7 +13,9 @@ router.use('/auth', authRoutes);
 router.use('/equipment', equipmentRoutes);
 router.use('/requests', requestRoutes);
 router.use('/teams', teamRoutes);
+router.use('/teams', teamRoutes);
 router.use('/departments', departmentRoutes);
+router.use('/parts', partRoutes);
 
 // Health check
 router.get('/health', (req, res) => {
