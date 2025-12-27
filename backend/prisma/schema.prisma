@@ -1,0 +1,199 @@
+// This is your Prisma schema file
+// Learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// USER & AUTHENTICATION
+// ============================================
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  firstName String
+  lastName  String
+  role      UserRole @default(TECHNICIAN)
+  avatar    String?
+  
+  // Team membership
+  teamId    String?
+  team      MaintenanceTeam? @relation(fields: [teamId], references: [id], onDelete: SetNull)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  ownedEquipment   Equipment[]          @relation("EquipmentOwner")
+  assignedRequests MaintenanceRequest[] @relation("AssignedTechnician")
+  createdRequests  MaintenanceRequest[] @relation("RequestCreator")
+  
+  @@map("users")
+}
+
+enum UserRole {
+  ADMIN
+  MANAGER
+  TECHNICIAN
+  USER
+}
+
+// ============================================
+// ORGANIZATIONAL STRUCTURE
+// ============================================
+
+model Department {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  equipment   Equipment[]
+  
+  @@map("departments")
+}
+
+model MaintenanceTeam {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  specialty   String   // IT, Mechanical, Electrical, HVAC, etc.
+  description String?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  members     User[]
+  equipment   Equipment[]
+  requests    MaintenanceRequest[]
+  
+  @@map("maintenance_teams")
+}
+
+// ============================================
+// EQUIPMENT MANAGEMENT
+// ============================================
+
+model Equipment {
+  id             String            @id @default(uuid())
+  name           String
+  serialNumber   String            @unique
+  category       EquipmentCategory
+  purchaseDate   DateTime
+  warrantyExpiry DateTime?
+  location       String
+  status         EquipmentStatus   @default(ACTIVE)
+  
+  // Ownership - Either department or individual
+  departmentId   String?
+  department     Department?       @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  
+  ownerId        String?
+  owner          User?             @relation("EquipmentOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+  
+  // Maintenance responsibility
+  maintenanceTeamId String
+  maintenanceTeam   MaintenanceTeam @relation(fields: [maintenanceTeamId], references: [id])
+  
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  
+  // Relations
+  requests       MaintenanceRequest[]
+  
+  @@map("equipment")
+}
+
+enum EquipmentCategory {
+  MACHINERY
+  VEHICLE
+  COMPUTER
+  HVAC
+  ELECTRICAL
+  PLUMBING
+  OTHER
+}
+
+enum EquipmentStatus {
+  ACTIVE
+  INACTIVE
+  SCRAPPED
+}
+
+// ============================================
+// MAINTENANCE REQUEST WORKFLOW
+// ============================================
+
+model MaintenanceRequest {
+  id            String            @id @default(uuid())
+  subject       String
+  description   String?
+  requestType   RequestType
+  priority      Priority          @default(MEDIUM) // Added for better sorting
+  
+  // Equipment reference
+  
+  // Equipment reference
+  equipmentId   String
+  equipment     Equipment         @relation(fields: [equipmentId], references: [id])
+  
+  // Auto-filled from equipment
+  category      EquipmentCategory
+  
+  // Team assignment
+  teamId        String
+  team          MaintenanceTeam   @relation(fields: [teamId], references: [id])
+  
+  // Technician assignment
+  assignedToId  String?
+  assignedTo    User?             @relation("AssignedTechnician", fields: [assignedToId], references: [id], onDelete: SetNull)
+  
+  // Workflow state machine
+  status        RequestStatus     @default(NEW)
+  
+  // Scheduling and tracking
+  scheduledDate DateTime?
+  startedAt     DateTime?
+  completedAt   DateTime?
+  durationHours Float?
+  completionNotes String?  // Field for "Log a note" requirement
+
+  
+  // Creator
+  createdById   String
+  createdBy     User              @relation("RequestCreator", fields: [createdById], references: [id])
+  
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  
+  @@map("maintenance_requests")
+}
+
+enum RequestType {
+  CORRECTIVE  // Unplanned repair (breakdown)
+  PREVENTIVE  // Planned maintenance (routine checkup)
+}
+
+enum RequestStatus {
+  NEW
+  IN_PROGRESS
+  REPAIRED
+  SCRAP
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
